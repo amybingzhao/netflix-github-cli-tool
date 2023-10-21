@@ -4,20 +4,34 @@ from github import Github, Repository
 from organization_utilities import get_organization, get_repos
 from repo_utilities import get_top_repos_by_criteria
 from criteria import Criteria
+from authentication_utilities import get_personal_access_token
+from github import Auth
 
 TOP_N_ARG_VALIDATION_ERROR_MESSAGE = "--top-n/-n must be an integer value greater than zero."
 
-def print_result(top_repos: list[Repository.Repository], organization_name: str, n: int, criteria: str) -> None:
+def _print_result(top_repos: list[Repository.Repository], organization_name: str, n: int, criteria: str) -> None:
     print(f"Top {n} repos in {organization_name} based on {criteria}:")
     for repo in top_repos:
         print(f"\t- {repo.name}")
 
+def _get_authenticated_github_client() -> Github:
+    return Github(
+        login_or_token=get_personal_access_token(),
+        auth=Auth.Token("access_token")
+    )
+
 def main(args):
-    github = Github() # todo: authentication, prompt for PAT?
-    organization = get_organization(github, args.organization_name)
+    (organization_name, n, criteria) = (args.organization_name, args.n, args.criteria)
+    github_client = _get_authenticated_github_client() # todo: authentication, prompt for PAT?
+    
+    print(f"Gathering the repos for {organization_name}")
+    organization = get_organization(github_client, organization_name)
     repos = get_repos(organization)
-    top_repos_by_criteria = get_top_repos_by_criteria(repos, args.n, args.criteria)
-    print_result(top_repos_by_criteria, args.organization_name, args.n, args.criteria)
+    print(f"Found {repos.totalCount} repo(s)")
+    
+    print(f"Filtering to the top {n} repo(s) based on {criteria}")
+    top_repos_by_criteria = get_top_repos_by_criteria(repos, n, criteria)
+    _print_result(top_repos_by_criteria, args.organization_name, n, criteria)
 
 def validate_top_n_arg(value):
     try:

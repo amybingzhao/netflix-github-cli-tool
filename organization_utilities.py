@@ -11,6 +11,9 @@ def get_organization(github: Github, organization_name: str) -> Organization.Org
         elif e.status == 401:
             print("Unable to authenticate. Please confirm you have access to this organization.")
             exit(1)
+        elif e.status == 403:
+            print("Is this also forbidden? What's rate limited") # todo revisit these error messages
+            exit(1)
         else:
             raise e
         

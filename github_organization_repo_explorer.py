@@ -6,11 +6,12 @@ from repo_utilities import get_top_repos_by_criteria
 from criteria import Criteria
 from authentication_utilities import get_personal_access_token
 from github import Auth
+from cache_utilities import get_github_data_cache
 
 TOP_N_ARG_VALIDATION_ERROR_MESSAGE = "--top-n/-n must be an integer value greater than zero."
 
-def _print_result(top_repos: list[Repository.Repository], organization_name: str, n: int, criteria: str) -> None:
-    print(f"Top {n} repos in {organization_name} based on {criteria}:")
+def _print_result(top_repos: list[Repository.Repository], organization_name: str, n: int, criteria: Criteria) -> None:
+    print(f"Top {n} repos in {organization_name} based on {criteria.value}:")
     for repo in top_repos:
         print(f"\t- {repo.name}")
 
@@ -21,17 +22,18 @@ def _get_authenticated_github_client() -> Github:
     )
 
 def main(args):
-    (organization_name, n, criteria) = (args.organization_name, args.n, args.criteria)
+    (organization_name, n, criteria) = (args.organization_name, args.n, Criteria(args.criteria))
     github_client = _get_authenticated_github_client() # todo: authentication, prompt for PAT?
     
-    print(f"Gathering the repos for {organization_name}")
-    organization = get_organization(github_client, organization_name)
-    repos = get_repos(organization)
-    print(f"Found {repos.totalCount} repo(s)")
-    
-    print(f"Filtering to the top {n} repo(s) based on {criteria}")
-    top_repos_by_criteria = get_top_repos_by_criteria(repos, n, criteria)
-    _print_result(top_repos_by_criteria, args.organization_name, n, criteria)
+    with get_github_data_cache() as cache:
+        print(f"Gathering the repos for {organization_name}")
+        organization = get_organization(github_client, organization_name)
+        repos = get_repos(organization, cache)
+        print(f"Found {repos.totalCount} repo(s)")
+        
+        print(f"Filtering to the top {n} repo(s) based on {criteria.value}")
+        top_repos_by_criteria = get_top_repos_by_criteria(repos, n, criteria, cache)
+        _print_result(top_repos_by_criteria, args.organization_name, n, criteria)
 
 def validate_top_n_arg(value):
     try:

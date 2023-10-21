@@ -1,5 +1,5 @@
 from github import PaginatedList, Repository
-from criteria import Criteria
+from models.criteria import Criteria
 import heapq
 from cache_utilities import GithubDataCache
 from typing import Callable

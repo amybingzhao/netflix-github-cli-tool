@@ -3,7 +3,7 @@ import os
 import pickle
 from github import PaginatedList, Repository
 import time
-from criteria import Criteria
+from models.criteria import Criteria
 from models.repo_data import RepoData
 
 CACHE_DIRECTORY = os.path.join(os.path.dirname(__file__), ".cache")

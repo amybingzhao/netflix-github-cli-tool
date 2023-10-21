@@ -3,7 +3,7 @@ import argparse
 from github import Github, Repository
 from organization_utilities import get_organization, get_repos
 from repo_utilities import get_top_repos_by_criteria
-from criteria import Criteria
+from models.criteria import Criteria
 from authentication_utilities import get_personal_access_token
 from github import Auth
 from cache_utilities import get_github_data_cache

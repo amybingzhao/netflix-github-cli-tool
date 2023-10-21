@@ -1,5 +1,5 @@
 from github import Github, Organization, PaginatedList, Repository
-from cache_utilities import GithubDataCache
+from utilities.cache_utilities import GithubDataCache
 
 def get_organization(github: Github, organization_name: str) -> Organization.Organization:
     try:

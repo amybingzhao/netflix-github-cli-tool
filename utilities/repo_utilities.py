@@ -1,7 +1,7 @@
 from github import PaginatedList, Repository
 from models.criteria import Criteria
 import heapq
-from cache_utilities import GithubDataCache
+from utilities.cache_utilities import GithubDataCache
 from typing import Callable
 from models.repo_data import RepoData
 

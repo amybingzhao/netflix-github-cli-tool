@@ -1,12 +1,12 @@
-from github import PaginatedList, Repository
-from models.criteria import Criteria
 import heapq
-from utilities.cache_utilities import GithubDataCache
-from typing import Callable
+from github import PaginatedList, Repository
+
+from models.criteria import Criteria
 from models.repo_data import RepoData
+from utilities.cache_utilities import GithubDataCache
 
 def _get_value_for_criteria(repo: Repository.Repository, criteria: Criteria, cache: GithubDataCache) -> int | float:
-    repo_data = cache.try_get_data_for_repo(repo.name)
+    repo_data = cache.try_get_data_for_repo(repo)
     
     if repo_data is None:
         repo_data = RepoData(
@@ -14,7 +14,7 @@ def _get_value_for_criteria(repo: Repository.Repository, criteria: Criteria, cac
             forks_count = repo.get_forks().totalCount,
             pull_requests_count = repo.get_pulls().totalCount,
         )
-        cache.update_data_for_repo(repo.name, repo_data)
+        cache.update_data_for_repo(repo, repo_data)
     
     return repo_data.get_data_for_criteria(criteria)
 
@@ -34,4 +34,4 @@ def get_top_repos_by_criteria(repos: PaginatedList.PaginatedList[Repository.Repo
             if value > min_value or value == min_value and repo.name > min_value_repo_name:
                 heapq.heapreplace(top_repos_with_value, (value, repo.name, repo))
 
-    return [repo_with_value[2] for repo_with_value in top_repos_with_value]
+    return reversed([repo_with_value[2] for repo_with_value in top_repos_with_value])

@@ -16,13 +16,17 @@ class GithubDataCache:
     def __init__(self):
         self.repos_by_organization_name = {}
         self.last_checked_time_by_organization_name = {}
-        self.repo_data_by_repo_name = {}
-        self.last_checked_time_by_repo_name = {}
+        self.repo_data_by_repo_full_name = {}
+        self.last_checked_time_by_repo_full_name  = {}
         self.version = CACHE_VERSION
     
     def _is_stale(self, current_time: int, last_checked_time: int) -> bool:
         return current_time - last_checked_time > self.TIME_TO_LIVE_SECONDS
-
+    
+    # we use the repo full name in case there are collisions across orgs
+    def _get_repo_key(self, repo: Repository.Repository) -> str:
+        return repo.full_name
+    
     def update_repos_for_org(self, organization_name: str, repos: PaginatedList.PaginatedList[Repository.Repository]) -> None:
         self.repos_by_organization_name[organization_name] = repos
         self.last_checked_time_by_organization_name[organization_name] = time.time()
@@ -40,21 +44,23 @@ class GithubDataCache:
         
         return repos
     
-    def update_data_for_repo(self, repo_name: str, repo_data: RepoData) -> None:
+    def update_data_for_repo(self, repo: Repository.Repository, repo_data: RepoData) -> None:
         current_time = time.time()
-        self.repo_data_by_repo_name[repo_name] = repo_data
-        self.last_checked_time_by_repo_name[repo_name] = current_time
+        repo_key = self._get_repo_key(repo)
+        self.repo_data_by_repo_full_name[repo_key] = repo_data
+        self.last_checked_time_by_repo_full_name[repo_key] = current_time
 
-    def try_get_data_for_repo(self, repo_name: str) -> int | None:
+    def try_get_data_for_repo(self, repo: Repository.Repository) -> int | None:
         current_time = time.time()
-        
+        repo_key = self._get_repo_key(repo)
+
         data = None
-        if repo_name in self.repo_data_by_repo_name:
-            if self._is_stale(current_time, self.last_checked_time_by_repo_name[repo_name]):
-                del self.repo_data_by_repo_name[repo_name]
-                del self.last_checked_time_by_repo_name[repo_name]
+        if repo_key in self.repo_data_by_repo_full_name:
+            if self._is_stale(current_time, self.last_checked_time_by_repo_full_name[repo_key]):
+                del self.repo_data_by_repo_full_name[repo_key]
+                del self.last_checked_time_by_repo_full_name[repo_key]
             else:
-                data = self.repo_data_by_repo_name[repo_name]
+                data = self.repo_data_by_repo_full_name[repo_key]
         
         return data
     

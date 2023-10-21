@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from github import Github, Repository
-from utilities.organization_utilities import get_organization, get_repos
+from utilities.github_utilities import get_organization, get_repos
 from utilities.repo_utilities import get_top_repos_by_criteria
 from models.criteria import Criteria
 from utilities.authentication_utilities import get_personal_access_token

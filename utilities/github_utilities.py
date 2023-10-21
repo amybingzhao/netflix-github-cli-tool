@@ -1,6 +1,12 @@
 from github import Github, Organization, PaginatedList, Repository
 from utilities.cache_utilities import GithubDataCache
 
+'''
+This file contains all the methods that might need to reach out to the Github API.
+
+We wrap and centralize them for simplified mocking in tests.
+'''
+
 def get_organization(github: Github, organization_name: str) -> Organization.Organization:
     try:
         return github.get_organization(organization_name)
@@ -26,3 +32,12 @@ def get_repos(organization: Organization.Organization, cache: GithubDataCache) -
         repos = organization.get_repos()
         cache.update_repos_for_org(organization.name, repos)
         return repos
+
+def get_stars_count(repo: Repository.Repository) -> int:
+    return repo.get_stargazers().totalCount
+
+def get_forks_count(repo: Repository.Repository) -> int:
+    repo.get_forks().totalCount
+
+def get_pull_requests_count(repo: Repository.Repository) -> int:
+    repo.get_pulls().totalCount,

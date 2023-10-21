@@ -3,6 +3,7 @@ from criteria import Criteria
 import heapq
 from cache_utilities import GithubDataCache
 from typing import Callable
+from models.repo_data import RepoData
 
 def _get_value_for_basic_criteria(repo: Repository.Repository, criteria: Criteria, cache: GithubDataCache, fetch_method: Callable[[Repository.Repository], int]) -> int | float:
     cached_value = cache.try_get_data_for_repo(repo.name, criteria)
@@ -12,20 +13,19 @@ def _get_value_for_basic_criteria(repo: Repository.Repository, criteria: Criteri
         updated_value = fetch_method(repo)
         cache.update_data_for_repo(repo.name, criteria, updated_value)
         return updated_value
-    
+
 def _get_value_for_criteria(repo: Repository.Repository, criteria: Criteria, cache: GithubDataCache) -> int | float:
-    if criteria == Criteria.STARS:
-        return _get_value_for_basic_criteria(repo, criteria, cache, lambda repo: repo.get_stargazers().totalCount)
-    elif criteria == Criteria.FORKS:
-        return _get_value_for_basic_criteria(repo, criteria, cache, lambda repo: repo.get_forks().totalCount)
-    elif criteria == Criteria.PULL_REQUESTS:
-        return _get_value_for_basic_criteria(repo, criteria, cache, lambda repo: repo.get_pulls().totalCount)
-    elif criteria == Criteria.CONTRIBUTION_PERCENTAGE:
-        pull_requests_count = _get_value_for_basic_criteria(repo, Criteria.PULL_REQUESTS, cache, lambda repo: repo.get_pulls().totalCount)
-        forks_count = _get_value_for_basic_criteria(repo, Criteria.FORKS, cache, lambda repo: repo.get_forks().totalCount)
-        return pull_requests_count / forks_count
-    else:
-        raise ValueError(f"Unsupported criteria: {criteria}")
+    repo_data = cache.try_get_data_for_repo(repo.name)
+    
+    if repo_data is None:
+        repo_data = RepoData(
+            stars_count = repo.get_stargazers().totalCount,
+            forks_count = repo.get_forks().totalCount,
+            pull_requests_count = repo.get_pulls().totalCount,
+        )
+        cache.update_data_for_repo(repo.name, repo_data)
+    
+    return repo_data.get_data_for_criteria(criteria)
 
 def get_top_repos_by_criteria(repos: PaginatedList.PaginatedList[Repository.Repository], n: int, criteria: Criteria, cache: GithubDataCache) -> list[Repository.Repository]:
     top_repos_with_value = [] # list[tuple[value, repo]]

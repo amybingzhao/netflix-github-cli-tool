@@ -58,8 +58,8 @@ class GithubDataCache:
         
         return data
     
-def _try_load_github_data_cache():
-    if not os.path.exists(CACHE_DIRECTORY):
+def _try_load_github_data_cache(refresh):
+    if not os.path.exists(CACHE_DIRECTORY) or refresh:
         return GithubDataCache()
     else:
         try:
@@ -72,8 +72,8 @@ def _try_load_github_data_cache():
             return GithubDataCache()
 
 @contextmanager
-def get_github_data_cache():
-    cache = _try_load_github_data_cache()
+def get_github_data_cache(refresh=False):
+    cache = _try_load_github_data_cache(refresh)
     try:
         yield cache
     finally:

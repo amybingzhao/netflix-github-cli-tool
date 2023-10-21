@@ -22,10 +22,10 @@ def _get_authenticated_github_client() -> Github:
     )
 
 def main(args):
-    (organization_name, n, criteria) = (args.organization_name, args.n, Criteria(args.criteria))
+    (organization_name, n, criteria, refresh_cache) = (args.organization_name, args.n, Criteria(args.criteria), args.refresh_cache)
     github_client = _get_authenticated_github_client() # todo: authentication, prompt for PAT?
     
-    with get_github_data_cache() as cache:
+    with get_github_data_cache(refresh=refresh_cache) as cache:
         print(f"Gathering the repos for {organization_name}")
         organization = get_organization(github_client, organization_name)
         repos = get_repos(organization, cache)
@@ -47,8 +47,9 @@ def validate_top_n_arg(value):
 def parse_args():
     parser = argparse.ArgumentParser(prog="github_organization_repo_explorer.py", description="For a given Github org, finds the top N repos by the requested criteria.")
     parser.add_argument("organization_name", type=str, help="The name of the org you want to explore")
-    parser.add_argument("--top-n", "-n", dest="n", type=validate_top_n_arg, required=False, default=5, help="FILL IN")
+    parser.add_argument("--number", "-n", dest="n", type=validate_top_n_arg, required=False, default=5, help="FILL IN")
     parser.add_argument("--criteria", "-c", dest="criteria", type=str, required=True, choices=[criteria.value for criteria in Criteria], help="FILL IN")
+    parser.add_argument("--refresh-cache", dest="refresh_cache", action="store_true")
     return parser.parse_args()
 
 if __name__ == "__main__":

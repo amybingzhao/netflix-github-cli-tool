@@ -7,7 +7,7 @@ from github_organization_repo_explorer.models.repo_data import RepoData
 
 CACHE_DIRECTORY = os.path.join(os.path.dirname(__file__), ".cache")
 CACHE_FILE = os.path.join(CACHE_DIRECTORY, "github_data.pkl")
-CACHE_VERSION = "1.0.0"
+CACHE_VERSION = 1
 
 class GithubDataCache:
     TIME_TO_LIVE_SECONDS = 60 * 60
@@ -63,8 +63,8 @@ class GithubDataCache:
         
         return data
     
-def _try_load_github_data_cache(refresh):
-    if not os.path.exists(CACHE_DIRECTORY) or refresh:
+def _try_load_github_data_cache(refresh: bool) -> GithubDataCache:
+    if not os.path.exists(CACHE_FILE) or refresh:
         return GithubDataCache()
     else:
         try:

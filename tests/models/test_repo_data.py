@@ -1,6 +1,6 @@
 import unittest
-from github_organization_repo_explorer.models.repo_data import RepoData
-from github_organization_repo_explorer.models.criteria import Criteria
+from models.repo_data import RepoData
+from models.criteria import Criteria
 
 class TestRepoData(unittest.TestCase):
     def test_get_stars(self):

@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import patch, mock_open
 import pickle 
 
-from github_organization_repo_explorer.utilities.cache_utilities import GithubDataCache, get_github_data_cache, CACHE_DIRECTORY, CACHE_FILE
-from github_organization_repo_explorer.models.repo_data import RepoData
+from utilities.cache_utilities import GithubDataCache, get_github_data_cache, CACHE_DIRECTORY, CACHE_FILE
+from models.repo_data import RepoData
 from tests.helpers import create_mock_repository, assertRepoDataIsEqual
 
 class TestGithubDataCache(unittest.TestCase):
@@ -124,7 +124,7 @@ class TestGithubDataCache(unittest.TestCase):
     
     # _pickle.PicklingError: Can't pickle <class 'unittest.mock.MagicMock'>: it's not the same object as unittest.mock.MagicMock
     # @patch("os.path.exists")
-    # @patch("github_organization_repo_explorer.utilities.cache_utilities.CACHE_VERSION")
+    # @patch("utilities.cache_utilities.CACHE_VERSION")
     # def test_get_github_data_cache_creates_new_cache_if_cache_version_has_changed(self, mock_cache_version, mock_exists):
     #     mock_exists.return_value = True
     #     mock_cache_version.return_value = 12

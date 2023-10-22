@@ -1,5 +1,5 @@
 from github import Github, Organization, PaginatedList, Repository
-from github_organization_repo_explorer.utilities.cache_utilities import GithubDataCache
+from utilities.cache_utilities import GithubDataCache
 
 '''
 This file contains all the methods that might need to reach out to the Github API.

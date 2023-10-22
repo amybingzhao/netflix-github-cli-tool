@@ -2,11 +2,11 @@
 import argparse
 from github import Github, Repository, Auth
 
-from github_organization_repo_explorer.utilities.github_utilities import get_organization, get_repos
-from github_organization_repo_explorer.utilities.repo_utilities import get_top_repos_by_criteria
-from github_organization_repo_explorer.models.criteria import Criteria
-from github_organization_repo_explorer.utilities.authentication_utilities import get_personal_access_token
-from github_organization_repo_explorer.utilities.cache_utilities import get_github_data_cache
+from utilities.github_utilities import get_organization, get_repos
+from utilities.repo_utilities import get_top_repos_by_criteria
+from models.criteria import Criteria
+from utilities.authentication_utilities import get_personal_access_token
+from utilities.cache_utilities import get_github_data_cache
 
 TOP_N_ARG_VALIDATION_ERROR_MESSAGE = "--top-n/-n must be an integer value greater than zero."
 
@@ -45,7 +45,7 @@ def validate_top_n_arg(value):
     return value_as_int
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog="github_organization_repo_explorer.py", description="For a given Github org, finds the top N repos by the requested criteria.")
+    parser = argparse.ArgumentParser(prog="py", description="For a given Github org, finds the top N repos by the requested criteria.")
     parser.add_argument("organization_name", type=str, help="The name of the org you want to explore")
     parser.add_argument("--number", "-n", dest="n", type=validate_top_n_arg, required=False, default=5, help="FILL IN")
     parser.add_argument("--criteria", "-c", dest="criteria", type=str, required=True, choices=[criteria.value for criteria in Criteria], help="FILL IN")

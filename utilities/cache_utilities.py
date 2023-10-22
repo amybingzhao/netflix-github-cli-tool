@@ -3,7 +3,7 @@ import os
 import pickle
 from github import PaginatedList, Repository
 import time
-from github_organization_repo_explorer.models.repo_data import RepoData
+from models.repo_data import RepoData
 
 CACHE_DIRECTORY = os.path.join(os.path.dirname(__file__), ".cache")
 CACHE_FILE = os.path.join(CACHE_DIRECTORY, "github_data.pkl")

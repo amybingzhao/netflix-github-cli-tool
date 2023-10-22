@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
 
-from github_organization_repo_explorer.utilities.cache_utilities import GithubDataCache
-from github_organization_repo_explorer.utilities.repo_utilities import get_top_repos_by_criteria
-from github_organization_repo_explorer.models.criteria import Criteria
+from utilities.cache_utilities import GithubDataCache
+from utilities.repo_utilities import get_top_repos_by_criteria
+from models.criteria import Criteria
 from tests.helpers import create_mock_repository
 
 MOCK_REPO_DATA = {
@@ -46,17 +46,17 @@ class TestRepoUtilities(unittest.TestCase):
         mock_get_forks_count.side_effect = get_mock_forks_count
         mock_get_pull_requests_count.side_effect = get_mock_pull_requests_count
 
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_stars_count")
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_forks_count")
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_pull_requests_count")
+    @patch("utilities.repo_utilities.get_stars_count")
+    @patch("utilities.repo_utilities.get_forks_count")
+    @patch("utilities.repo_utilities.get_pull_requests_count")
     def test_get_top_repos_by_criteria_with_no_repos(self, mock_get_pull_requests_count, mock_get_forks_count, mock_get_stars_count):
         self.set_up_mocks(mock_get_stars_count, mock_get_forks_count, mock_get_pull_requests_count)
         top_repos = get_top_repos_by_criteria([], n=10, criteria=Criteria.STARS, cache=GithubDataCache())
         self.assertEqual(list(top_repos), [])
     
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_stars_count")
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_forks_count")
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_pull_requests_count")
+    @patch("utilities.repo_utilities.get_stars_count")
+    @patch("utilities.repo_utilities.get_forks_count")
+    @patch("utilities.repo_utilities.get_pull_requests_count")
     def test_get_top_repos_by_criteria_filters_by_requested_criteria_with_fewer_than_n_repos(self, mock_get_pull_requests_count, mock_get_forks_count, mock_get_stars_count):
         self.set_up_mocks(mock_get_stars_count, mock_get_forks_count, mock_get_pull_requests_count)
         top_repos = get_top_repos_by_criteria(MOCK_REPOS, n=10, criteria=Criteria.FORKS, cache=GithubDataCache())
@@ -64,9 +64,9 @@ class TestRepoUtilities(unittest.TestCase):
         mock_repo_names = [repo.name for repo in MOCK_REPOS]
         self.assertCountEqual(top_repo_names, mock_repo_names)
     
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_stars_count")
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_forks_count")
-    @patch("github_organization_repo_explorer.utilities.repo_utilities.get_pull_requests_count")
+    @patch("utilities.repo_utilities.get_stars_count")
+    @patch("utilities.repo_utilities.get_forks_count")
+    @patch("utilities.repo_utilities.get_pull_requests_count")
     def test_get_top_repos_by_criteria_with_more_than_n_repos(self, mock_get_pull_requests_count, mock_get_forks_count, mock_get_stars_count):
         self.set_up_mocks(mock_get_stars_count, mock_get_forks_count, mock_get_pull_requests_count)
         

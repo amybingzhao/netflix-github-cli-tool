@@ -1,10 +1,10 @@
 import unittest
 from unittest.mock import patch
 
-from utilities.cache_utilities import GithubDataCache
-from utilities.repo_utilities import get_top_repos_by_criteria
 from models.criteria import Criteria
 from tests.helpers import create_mock_repository
+from utilities.cache_utilities import GithubDataCache
+from utilities.repo_utilities import get_top_repos_by_criteria
 
 MOCK_REPO_DATA = {
     "ManyStarsRepo": {

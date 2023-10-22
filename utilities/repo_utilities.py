@@ -1,4 +1,5 @@
 import heapq
+
 from github import PaginatedList, Repository
 
 from models.criteria import Criteria

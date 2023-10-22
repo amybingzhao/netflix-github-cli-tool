@@ -14,6 +14,7 @@ class RepoData:
         elif criteria == Criteria.PULL_REQUESTS:
             return self.pull_requests_count
         elif criteria == Criteria.CONTRIBUTION_PERCENTAGE:
-            return self.pull_requests_count / self.forks_count if self.forks_count != 0 else 0
+            # We make the denominator consistently bigger by 1 to avoid divide by 0 errors
+            return self.pull_requests_count / (self.forks_count + 1)
         else:
             raise ValueError(f"Unknown criteria: {criteria.value}")

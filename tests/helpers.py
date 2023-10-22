@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
-from models.repo_data import RepoData
+
 from models.criteria import Criteria
+from models.repo_data import RepoData
 
 def create_mock_repository(organization_name: str, repo_name: str):
     mock_repository = MagicMock()

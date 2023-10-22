@@ -2,9 +2,9 @@ import unittest
 from unittest.mock import patch, mock_open
 import pickle 
 
-from utilities.cache_utilities import GithubDataCache, get_github_data_cache, CACHE_DIRECTORY, CACHE_FILE
 from models.repo_data import RepoData
 from tests.helpers import create_mock_repository, assertRepoDataIsEqual
+from utilities.cache_utilities import GithubDataCache, get_github_data_cache, CACHE_DIRECTORY
 
 class TestGithubDataCache(unittest.TestCase):
     def test_get_repos_for_org_with_no_data(self):

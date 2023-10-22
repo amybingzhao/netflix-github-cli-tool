@@ -1,8 +1,10 @@
 from contextlib import contextmanager
 import os
 import pickle
-from github import PaginatedList, Repository
 import time
+
+from github import PaginatedList, Repository
+
 from models.repo_data import RepoData
 
 CACHE_DIRECTORY = os.path.join(os.path.dirname(__file__), ".cache")

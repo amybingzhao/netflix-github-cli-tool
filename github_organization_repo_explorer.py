@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import argparse
+
 from github import Github, Repository, Auth
 
+from models.criteria import Criteria
 from utilities.github_utilities import get_organization, get_repos
 from utilities.repo_utilities import get_top_repos_by_criteria
-from models.criteria import Criteria
 from utilities.authentication_utilities import get_personal_access_token
 from utilities.cache_utilities import get_github_data_cache
 
@@ -23,7 +24,7 @@ def _get_authenticated_github_client() -> Github:
 
 def main(args):
     (organization_name, n, criteria, refresh_cache) = (args.organization_name, args.n, Criteria(args.criteria), args.refresh_cache)
-    github_client = _get_authenticated_github_client() # todo: authentication, prompt for PAT?
+    github_client = _get_authenticated_github_client()
     
     with get_github_data_cache(refresh=refresh_cache) as cache:
         print(f"Gathering the repos for {organization_name}")

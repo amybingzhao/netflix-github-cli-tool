@@ -83,7 +83,9 @@ def get_github_data_cache(refresh=False):
     cache = _try_load_github_data_cache(refresh)
     try:
         yield cache
-    finally:
+    except Exception as e:
+        raise e
+    else:
         os.makedirs(CACHE_DIRECTORY, exist_ok=True)
         with open(CACHE_FILE, "wb") as f:
             pickle.dump(cache, f)

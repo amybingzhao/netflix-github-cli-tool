@@ -21,7 +21,8 @@ def _get_value_for_criteria(repo: Repository.Repository, criteria: Criteria, cac
     return repo_data.get_data_for_criteria(criteria)
 
 def get_top_repos_by_criteria(repos: PaginatedList.PaginatedList[Repository.Repository], n: int, criteria: Criteria, cache: GithubDataCache) -> list[Repository.Repository]:
-    top_repos_with_value = [] # list[tuple[value, repo]]
+    top_repos_with_value = [] # list[tuple[value, repo_name, repo]]
+
     for repo in repos:
         value = _get_value_for_criteria(repo, criteria, cache)
         if len(top_repos_with_value) < n:
@@ -34,4 +35,5 @@ def get_top_repos_by_criteria(repos: PaginatedList.PaginatedList[Repository.Repo
             (min_value, min_value_repo_name, _) = top_repos_with_value[0]
             if value > min_value or value == min_value and repo.name > min_value_repo_name:
                 heapq.heapreplace(top_repos_with_value, (value, repo.name, repo))
+        
     return [repo_with_value[2] for repo_with_value in heapq.nlargest(n, top_repos_with_value)]

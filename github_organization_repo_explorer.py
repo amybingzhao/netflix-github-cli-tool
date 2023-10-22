@@ -16,15 +16,19 @@ def _print_result(top_repos: list[Repository.Repository], organization_name: str
     for repo in top_repos:
         print(f"\t- {repo.name}")
 
-def _get_authenticated_github_client() -> Github:
-    return Github(
-        login_or_token=get_personal_access_token(),
-        auth=Auth.Token("access_token")
-    )
+def _get_github_client() -> Github:
+    personal_access_token = get_personal_access_token()
+    if personal_access_token is not None:
+        return Github(
+            login_or_token=get_personal_access_token(),
+            auth=Auth.Token("access_token")
+        )
+    else:
+        return Github()
 
 def main(args):
     (organization_name, n, criteria, refresh_cache) = (args.organization_name, args.n, Criteria(args.criteria), args.refresh_cache)
-    github_client = _get_authenticated_github_client()
+    github_client = _get_github_client()
     
     with get_github_data_cache(refresh=refresh_cache) as cache:
         print(f"Gathering the repos for {organization_name}")
@@ -48,8 +52,8 @@ def validate_top_n_arg(value):
 def parse_args():
     parser = argparse.ArgumentParser(prog="py", description="For a given Github org, finds the top N repos by the requested criteria.")
     parser.add_argument("organization_name", type=str, help="The name of the org you want to explore")
-    parser.add_argument("--number", "-n", dest="n", type=validate_top_n_arg, required=False, default=5, help="FILL IN")
-    parser.add_argument("--criteria", "-c", dest="criteria", type=str, required=True, choices=[criteria.value for criteria in Criteria], help="FILL IN")
+    parser.add_argument("--number", "-n", dest="n", type=validate_top_n_arg, required=False, default=5, help="The number of repos you want to filter to")
+    parser.add_argument("--criteria", "-c", dest="criteria", type=str, required=True, choices=[criteria.value for criteria in Criteria], help="The criteria you want to filter by")
     parser.add_argument("--refresh-cache", dest="refresh_cache", action="store_true")
     return parser.parse_args()
 

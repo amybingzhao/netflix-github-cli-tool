@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python3.10 ./github_organization_repo_explorer.py "$@"

@@ -1,10 +1,10 @@
 import heapq
 from github import PaginatedList, Repository
 
-from models.criteria import Criteria
-from models.repo_data import RepoData
-from utilities.cache_utilities import GithubDataCache
-from utilities.github_utilities import get_stars_count, get_forks_count, get_pull_requests_count
+from github_organization_repo_explorer.models.criteria import Criteria
+from github_organization_repo_explorer.models.repo_data import RepoData
+from github_organization_repo_explorer.utilities.cache_utilities import GithubDataCache
+from github_organization_repo_explorer.utilities.github_utilities import get_stars_count, get_forks_count, get_pull_requests_count
 
 def _get_value_for_criteria(repo: Repository.Repository, criteria: Criteria, cache: GithubDataCache) -> int | float:
     repo_data = cache.try_get_data_for_repo(repo)

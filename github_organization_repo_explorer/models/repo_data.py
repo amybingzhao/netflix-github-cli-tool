@@ -1,4 +1,4 @@
-from models.criteria import Criteria
+from github_organization_repo_explorer.models.criteria import Criteria
 
 class RepoData:
     def __init__(self, stars_count: int, forks_count: int, pull_requests_count: int):

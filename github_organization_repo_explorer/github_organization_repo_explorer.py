@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import argparse
-from github import Github, Repository
-from utilities.github_utilities import get_organization, get_repos
-from utilities.repo_utilities import get_top_repos_by_criteria
-from models.criteria import Criteria
-from utilities.authentication_utilities import get_personal_access_token
-from github import Auth
-from utilities.cache_utilities import get_github_data_cache
+from github import Github, Repository, Auth
+
+from github_organization_repo_explorer.utilities.github_utilities import get_organization, get_repos
+from github_organization_repo_explorer.utilities.repo_utilities import get_top_repos_by_criteria
+from github_organization_repo_explorer.models.criteria import Criteria
+from github_organization_repo_explorer.utilities.authentication_utilities import get_personal_access_token
+from github_organization_repo_explorer.utilities.cache_utilities import get_github_data_cache
 
 TOP_N_ARG_VALIDATION_ERROR_MESSAGE = "--top-n/-n must be an integer value greater than zero."
 

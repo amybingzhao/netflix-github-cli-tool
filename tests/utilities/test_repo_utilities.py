@@ -19,7 +19,7 @@ MOCK_REPO_DATA = {
     },
     "ManyPullsRepo": {
         Criteria.STARS.value: 0,
-        Criteria.FORKS.value: 0,
+        Criteria.FORKS.value: 2,
         Criteria.PULL_REQUESTS.value: 100,
     },
     "ManyContributionsRepo": {
@@ -74,14 +74,12 @@ class TestRepoUtilities(unittest.TestCase):
         self.assertEqual([repo.name for repo in top_repos_by_stars], ["ManyStarsRepo", "ManyForksRepo"])
 
         top_repos_by_forks = get_top_repos_by_criteria(MOCK_REPOS, n=3, criteria=Criteria.FORKS, cache=GithubDataCache())
-        self.assertEqual([repo.name for repo in top_repos_by_forks], ["ManyForksRepo", "ManyStarsRepo", "ManyContributionsRepo"])
+        self.assertEqual([repo.name for repo in top_repos_by_forks], ["ManyForksRepo", "ManyStarsRepo", "ManyPullsRepo"])
 
         top_repos_by_pull_requests = get_top_repos_by_criteria(MOCK_REPOS, n=1, criteria=Criteria.PULL_REQUESTS, cache=GithubDataCache())
         self.assertEqual([repo.name for repo in top_repos_by_pull_requests], ["ManyPullsRepo"])
 
         top_repos_by_contribution_percentage = get_top_repos_by_criteria(MOCK_REPOS, n=3, criteria=Criteria.CONTRIBUTION_PERCENTAGE, cache=GithubDataCache())
-        self.assertEqual([repo.name for repo in top_repos_by_contribution_percentage], ["ManyContributionsRepo", "ManyStarsRepo", "ManyForksRepo"])
+        self.assertEqual([repo.name for repo in top_repos_by_contribution_percentage], ["ManyContributionsRepo", "ManyPullsRepo", "ManyStarsRepo"])
         
-# mock cache data + get_stars/fork/pull reuquests count results
-
 # todo: consider tests with cache

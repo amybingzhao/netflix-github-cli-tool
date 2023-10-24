@@ -24,8 +24,8 @@ def get_organization(github: Github, organization_name: str) -> Organization.Org
         else:
             raise e
         
-def get_repos(organization: Organization.Organization, cache: GithubDataCache) -> PaginatedList.PaginatedList[Repository.Repository]:
-    cached_repos_or_none = cache.try_get_repos_for_org(organization.name)
+def get_repos(organization_name: str, organization: Organization.Organization, cache: GithubDataCache) -> PaginatedList.PaginatedList[Repository.Repository]:
+    cached_repos_or_none = cache.try_get_repos_for_org(organization_name)
     if cached_repos_or_none is not None:
         return cached_repos_or_none
     else:
@@ -35,7 +35,7 @@ def get_repos(organization: Organization.Organization, cache: GithubDataCache) -
             if e.status in ERROR_MESSAGE_BY_ERROR_CODE:
                 print(ERROR_MESSAGE_BY_ERROR_CODE[e.status])
                 exit(1)
-        cache.update_repos_for_org(organization.name, repos)
+        cache.update_repos_for_org(organization_name, repos)
         return repos
 
 def get_stars_count(repo: Repository.Repository) -> int:

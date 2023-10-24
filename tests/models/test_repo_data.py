@@ -18,11 +18,11 @@ class TestRepoData(unittest.TestCase):
 
     def test_get_contribution_percentage_with_zero_denominator(self):
         repo_data = RepoData(stars_count=9999, forks_count=0, pull_requests_count=52)
-        self.assertEqual(repo_data.get_data_for_criteria(Criteria.CONTRIBUTION_PERCENTAGE), 52.0)
+        self.assertEqual(repo_data.get_data_for_criteria(Criteria.CONTRIBUTION_PERCENTAGE), 5200.0)
 
     def test_get_contribution_percentage_with_non_zero_denominator(self):
         repo_data = RepoData(stars_count=10222, forks_count=20, pull_requests_count=0)
         self.assertEqual(repo_data.get_data_for_criteria(Criteria.CONTRIBUTION_PERCENTAGE), 0)
 
         repo_data2 = RepoData(stars_count=7, forks_count=20, pull_requests_count=3)
-        self.assertEqual(repo_data2.get_data_for_criteria(Criteria.CONTRIBUTION_PERCENTAGE), (3/(20 + 1)))
+        self.assertEqual(repo_data2.get_data_for_criteria(Criteria.CONTRIBUTION_PERCENTAGE), (3/(20 + 1)) * 100)

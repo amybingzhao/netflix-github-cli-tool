@@ -10,10 +10,9 @@ from models.repo_data import RepoData
 CACHE_DIRECTORY = os.path.join(os.path.dirname(__file__), ".cache")
 CACHE_FILE = os.path.join(CACHE_DIRECTORY, "github_data.pkl")
 CACHE_VERSION = 1
+TIME_TO_LIVE_SECONDS = 60 * 60
 
 class GithubDataCache:
-    TIME_TO_LIVE_SECONDS = 60 * 60
-
     def __init__(self):
         self.repos_by_organization_name = {}
         self.last_checked_time_by_organization_name = {}
@@ -22,7 +21,7 @@ class GithubDataCache:
         self.version = CACHE_VERSION
     
     def _is_stale(self, current_time: int, last_checked_time: int) -> bool:
-        return current_time - last_checked_time > self.TIME_TO_LIVE_SECONDS
+        return current_time - last_checked_time > TIME_TO_LIVE_SECONDS
     
     # we use the repo full name in case there are collisions across orgs
     def _get_repo_key(self, repo: Repository.Repository) -> str:
@@ -72,7 +71,11 @@ def _try_load_github_data_cache(refresh: bool) -> GithubDataCache:
         try:
             with open(CACHE_FILE, "rb") as f:
                 cache = pickle.load(f)
-                return cache if cache.version == CACHE_VERSION else GithubDataCache()
+                if cache.version == CACHE_VERSION:
+                    print("Note: Found cached data that will be used if not stale. If you want to re-fetch all data, re-run this command with `--refresh-cache`.\n")
+                    return cache
+                else:
+                    return GithubDataCache()
         except Exception:
             # if we run into an unexpected error loading the cache (e.g because the pickle file is corrupted),
             # just return and empty cache

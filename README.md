@@ -6,7 +6,8 @@ For a github organization, find the:
 - Top-N repos by # of forks
 - Top-N repos by number of PRs
 - Top-N repos by contribution percentage (PRs/forks)
-  - What we're approximating here is how often people who are interested in a repo contribute back to the original repo. By this logic a repo that has e.g. 5 PRs and 0 forks has a higher contribution percentage than a repo with 5 PRs and 1 fork since all people who are interested in it are contributing to the original repo rather than working off of a fork.
+  - What we're approximating here is how often people who are interested in a repo contribute back to the original repo. By this logic a repo that has e.g. 5 PRs and 0 forks has a higher contribution percentage than a repo with 5 PRs and 1 fork since all people who are interested in it are contributing to the original repo rather than working off of a fork. We achieve this by considering the original repo a fork.
+  - In real life we'd probably want to do some user interviews to check that this aligns with how users would interpret contribution percentage
 
 Ties are broken alphabetically by repo name, which should be unique within an org. This is a simple V0 tie breaking method, but if requested we could implement other tiebreakers.
 
@@ -41,6 +42,9 @@ When you run this CLI tool it will:
     - These queries may also be cached per-repo if the repo has been queried in the last 60 min
     - Right now we fetch and cache the stars, forks, and PR data for a repo in an all-or-nothing fashion b/c we assume that if the user is asking about e.g. stars they might follow-up with a quetsion about e.g. forks, but if this turns out not to be the case + we're hitting performance issues because of the extra requests to fetch data about other criteria, we could also fetch and cache the stars, forks, and PR data more granularly.
 5. As data is gathered for each repo in step 4, maintain a heap of size N that has the top N repos based on the selected criteria. Whenever we encounter a repo that has a greater value for the selected criteria than the min value in this heap, pop the min value off and push the new repo onto the heap.
+    - This assumes that the number of repos (r) is usually much larger than n. With this approach, the runtime of this step is O(rlogn).
+    - Alternatively, we could just sort the list of repos and pick the top n -- this would take O(rlogr) time.
+    - We should validate whether it's true that r >> n through metrics/logging
 6. Print the results of 5 to the console
 7. Save any new cached results to a .pkl file
 
@@ -82,6 +86,8 @@ The 60 min TTL is a best initial guess based on how long we think a working sess
 #### Output format
 
 We output the results as a list in descending order based on the value for the requested criteria. We also output the value of the criteria next to the repo name so the end user can understand the ordering.
+
+When we're fetching data for repos, we print out a message since this step can take a long time if there are many repos. This gives  the user gets some indicator that the program is progressing and not just hanging.
 
 
 ### Enhancements to consider
@@ -167,12 +173,12 @@ Ranking by # of PRs:
 6. MostForks (0)
 
 Ranking by contribution percentage:
-1. HighestContributionPercentage (2 PRs, 0 forks)
-2. MostStars (1 PR, 0 forks)
-3. MostPullRequests (3 PRs, 1 fork)
-4. AnotherForkOfMostForks (0 PRs, 0 forks)
-5. ForkOfMostForks (0 PRs, 0 forks)
-6. MostForks (0 PRs, 0 forks)
+1. HighestContributionPercentage (2 PRs, 0 fork --> (2/(0 forks + 1 original repo)) = 200%)
+2. MostPullRequests (3 PRs, 1 fork --> (3/(1 forks + 1 original repo)) = 150%)
+3. MostStars (1 PR, 0 forks --> (1/(0 forks + 1 original repo)) = 100%)
+4. AnotherForkOfMostForks (0 PRs, 0 forks --> 0%)
+5. ForkOfMostForks (0 PRs, 0 forks --> 0%)
+6. MostForks (0 PRs, 3 forks --> 0%)
 
 Other manual test cases:
 - Running w/ and w/o a PAT set up

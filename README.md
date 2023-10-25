@@ -111,6 +111,7 @@ When we're fetching data for repos, we print out a message since this step can t
   - This would make the output more readable by the end user
 - Linting
   - Setting up a linter would help with the readability of this project
+- Refinements around where the .cache folder + .env file are stored. Right now they're stored next to the files that create them for convenience but they should probably be stored either at the git root or some other commonly-used location (e.g. if tools already store data in some ~/.cache folder) for discoverability.
 
 
 ## Testing
